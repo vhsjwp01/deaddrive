@@ -4,4 +4,4 @@ start on stopped rc RUNLEVEL=[2345]
 stop on starting rc RUNLEVEL=[S016]
 
 respawn 
-exec /usr/local/bin/deaddrive
+exec /usr/local/sbin/deaddrive

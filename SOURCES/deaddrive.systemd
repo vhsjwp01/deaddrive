@@ -1,9 +1,9 @@
 [Unit]
-Description=Job that runs /usr/local/bin/deaddrive in the background
+Description=Job that runs /usr/local/sbin/deaddrive in the background
 
 [Service]
 Type=forking
-ExecStart=/usr/local/bin/deaddrive
+ExecStart=/usr/local/sbin/deaddrive
 
 [Install]
 WantedBy=multi-user.target
