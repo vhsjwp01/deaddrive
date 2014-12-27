@@ -112,7 +112,7 @@ f__check_command() {
 ################################################################################
 #
 
-# WHAT: Make sure we have a some useful commands
+# WHAT: Make sure we have some useful commands
 # WHY:  Cannot proceed otherwise
 #
 if [ ${exit_code} -eq ${SUCCESS} ]; then
