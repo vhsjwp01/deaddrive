@@ -89,7 +89,7 @@ f__check_command() {
     my_command="${1}"
 
     if [ "${my_command}" != "" ]; then
-        my_command_check=`which ${1} 2> /dev/null`
+        my_command_check=`unalias "${i}" ; which "${1}" 2> /dev/null`
 
         if [ "${my_command_check}" = "" ]; then
             return_code=${ERROR}
