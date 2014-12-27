@@ -42,10 +42,17 @@ Requires: ledmon
 Requires: zfs
 
 %define install_base /usr/local
-%define install_dir %{install_base}/bin
+%define install_dir %{install_base}/sbin
 
 Source0: ~/rpmbuild/SOURCES/deaddrive.sh
-#Source1: /usr/src/redhat/SOURCES/suricata_init_script
+
+%if %{distro_major_ver} == 6
+Source1: ~/rpmbuild/SOURCES/deaddrive.upstart
+%endif
+
+%if %{distro_major_ver} > 6
+Source1: ~/rpmbuild/SOURCES/deaddrive.systemd
+%endif
 
 %description
 Dead drive is a bash script that queries zpool status to identify
@@ -53,10 +60,19 @@ dead hard drives and illuminate their status LED.  Meant to be run
 as an inittab/upstart/systemd daemon
 
 %install
+printf "Source1 is: %{SOURCE1}"
 rm -rf %{buildroot}
 # Populate %{buildroot}
 mkdir -p %{buildroot}%{install_dir}
 cp %{SOURCE0} %{buildroot}%{install_dir}/deaddrive
+if [ %{distro_major_ver} -eq 6 ]; then
+    mkdir -p %{buildroot}/etc/init
+    cp %{SOURCE1} %{buildroot}/etc/init/%{name}.conf
+fi
+if [ %{distro_major_ver} -gt 6 ]; then
+    mkdir -p %{buildroot}/usr/lib/system/systemd
+    cp %{SOURCE1} %{buildroot}/usr/lib/system/systemd/%{name}.service
+fi
 # Build packaging manifest
 rm -rf /tmp/MANIFEST.%{name}* > /dev/null 2>&1
 echo '%defattr(-,root,root)' > /tmp/MANIFEST.%{name}
@@ -81,6 +97,23 @@ done | sort -u >> /tmp/MANIFEST.%{name}
 %post
 if [ ! -d /var/log/zfs ]; then
     mkdir -p /var/log/zfs
+fi
+if [ %{distro_major_ver} -lt 6 ]; then
+    if [ -r /etc/inittab ]; then
+        dd_check=`egrep "/usr/local/bin/deaddrive" /etc/inittab | wc -l`
+        if [ ${dd_check} -eq 0 ]; then
+            echo "" >> /etc/inittab
+            echo "# Run /usr/local/bin/deaddrive in runlevels 2 through 5" >> /etc/inittab
+            echo "dd01:2345:respawn:/usr/local/bin/deaddrive" >> /etc/inittab
+        fi
+    fi
+fi
+
+%postun
+if [ %{distro_major_ver} -lt 6 ]; then
+    cp -p /etc/inittab /tmp/inittab.$$
+    egrep -v "/usr/local/bin/deaddrive" /tmp/inittab.$$ > /etc/inittab
+    rm /tmp/inittab.$$
 fi
 
 %files -f /tmp/MANIFEST.%{name}
