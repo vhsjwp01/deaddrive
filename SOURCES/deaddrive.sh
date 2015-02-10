@@ -20,6 +20,8 @@
 # 20141023     Jason W. Plummer          Modified to fit this documentation
 #                                        format.  Checks that invoking user is 
 #                                        id=0
+# 20150210     Jason W. Plummer          Added error logging when physical disk
+#                                        cannot be located
 
 ################################################################################
 # DESCRIPTION
@@ -209,6 +211,8 @@ while [ ${exit_code} -eq ${SUCCESS} ]; do
                     csv_list="${csv_list},${this_target}"
                 fi
 
+            else
+                echo "`${my_date}`:   ALARM - Discovered problems with drive ${real_drive}, but the physical disk cannot be found" >> "${LOG_DIR}/${LOG_FILE}"
             fi
 
         done
