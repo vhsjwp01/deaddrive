@@ -20,12 +20,12 @@ BuildArch: noarch
 # These BuildRequires can be found in Base
 #BuildRequires: zlib, zlib-devel 
 
-# This block handles Oracle Linux UEK .vs. EL BuildRequires
-%if %{uek}
-BuildRequires: kernel-uek-devel, kernel-uek-headers
-%else
-BuildRequires: kernel-devel, kernel-headers
-%endif
+## This block handles Oracle Linux UEK .vs. EL BuildRequires
+#%if %{uek}
+#BuildRequires: kernel-uek-devel, kernel-uek-headers
+#%else
+#BuildRequires: kernel-devel, kernel-headers
+#%endif
 
 # These BuildRequires can be found in EPEL
 
